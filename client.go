@@ -133,7 +133,7 @@ func (this HuaweiPushClient) PushMsg(deviceToken, payload string) string {
 /**
  * push msg list
  */
-func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) string {
+func (this HuaweiPushClient) PushMsgList(deviceTokens string, payload string) string {
 
 	accessToken := this.GetToken()
 	reqUrl := PUSH_URL + "?nsp_ctx=" + url.QueryEscape(this.NspCtx)
