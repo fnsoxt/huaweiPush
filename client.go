@@ -42,8 +42,8 @@ func NewMessage() *Message {
 				Action: Action{
 					Type: 1, //1, 自定义行为; 2, 打开URL; 3, 打开App;
 					Param: Param{
-						Intent: "#Intent;compo=com.rvr/.Activity;S.W=U;end",
-						AppPkgName:"",
+						Intent:     "#Intent;compo=com.rvr/.Activity;S.W=U;end",
+						AppPkgName: "",
 					},
 				},
 			},
@@ -108,7 +108,6 @@ func (this HuaweiPushClient) PushMsg(deviceToken, payload string) string {
 	accessToken := this.GetToken()
 	reqUrl := PUSH_URL + "?nsp_ctx=" + url.QueryEscape(this.NspCtx)
 
-
 	var originParam = map[string]string{
 		"access_token":      accessToken,
 		"nsp_svc":           NSP_SVC,
@@ -118,6 +117,35 @@ func (this HuaweiPushClient) PushMsg(deviceToken, payload string) string {
 		"expire_time":       time.Now().Format("2006-01-02T15:04"),
 	}
 
+	param := make(url.Values)
+	param["access_token"] = []string{originParam["access_token"]}
+	param["nsp_svc"] = []string{originParam["nsp_svc"]}
+	param["nsp_ts"] = []string{originParam["nsp_ts"]}
+	param["device_token_list"] = []string{originParam["device_token_list"]}
+	param["payload"] = []string{originParam["payload"]}
+
+	// push
+	res, _ := FormPost(reqUrl, param)
+
+	return string(res)
+}
+
+/**
+ * push msg list
+ */
+func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) string {
+
+	accessToken := this.GetToken()
+	reqUrl := PUSH_URL + "?nsp_ctx=" + url.QueryEscape(this.NspCtx)
+
+	var originParam = map[string]string{
+		"access_token":      accessToken,
+		"nsp_svc":           NSP_SVC,
+		"nsp_ts":            strconv.Itoa(int(time.Now().Unix())),
+		"device_token_list": deviceTokens,
+		"payload":           payload,
+		"expire_time":       time.Now().Format("2006-01-02T15:04"),
+	}
 
 	param := make(url.Values)
 	param["access_token"] = []string{originParam["access_token"]}
