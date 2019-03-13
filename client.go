@@ -133,25 +133,24 @@ func (this HuaweiPushClient) PushMsg(deviceToken, payload string) string {
 /**
  * push msg list
  */
-func (this HuaweiPushClient) PushMsgList(deviceTokens string, payload string) string {
+func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) string {
 
 	accessToken := this.GetToken()
 	reqUrl := PUSH_URL + "?nsp_ctx=" + url.QueryEscape(this.NspCtx)
 
 	var originParam = map[string]string{
-		"access_token":      accessToken,
-		"nsp_svc":           NSP_SVC,
-		"nsp_ts":            strconv.Itoa(int(time.Now().Unix())),
-		"device_token_list": deviceTokens,
-		"payload":           payload,
-		"expire_time":       time.Now().Format("2006-01-02T15:04"),
+		"access_token": accessToken,
+		"nsp_svc":      NSP_SVC,
+		"nsp_ts":       strconv.Itoa(int(time.Now().Unix())),
+		"payload":      payload,
+		"expire_time":  time.Now().Format("2006-01-02T15:04"),
 	}
 
 	param := make(url.Values)
 	param["access_token"] = []string{originParam["access_token"]}
 	param["nsp_svc"] = []string{originParam["nsp_svc"]}
 	param["nsp_ts"] = []string{originParam["nsp_ts"]}
-	param["device_token_list"] = []string{originParam["device_token_list"]}
+	param["device_token_list"] = deviceTokens
 	param["payload"] = []string{originParam["payload"]}
 
 	// push
