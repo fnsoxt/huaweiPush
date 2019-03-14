@@ -133,7 +133,7 @@ func (this HuaweiPushClient) PushMsg(deviceToken, payload string) string {
 /**
  * push msg list
  */
-func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) string {
+func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) (string, error) {
 
 	accessToken := this.GetToken()
 	reqUrl := PUSH_URL + "?nsp_ctx=" + url.QueryEscape(this.NspCtx)
@@ -146,15 +146,17 @@ func (this HuaweiPushClient) PushMsgList(deviceTokens []string, payload string) 
 		"expire_time":  time.Now().Format("2006-01-02T15:04"),
 	}
 
+	str, _ := json.Marshal(deviceTokens)
+
 	param := make(url.Values)
 	param["access_token"] = []string{originParam["access_token"]}
 	param["nsp_svc"] = []string{originParam["nsp_svc"]}
 	param["nsp_ts"] = []string{originParam["nsp_ts"]}
-	param["device_token_list"] = deviceTokens
+	param["device_token_list"] = []string{string(str)}
 	param["payload"] = []string{originParam["payload"]}
 
 	// push
-	res, _ := FormPost(reqUrl, param)
+	res, err := FormPost(reqUrl, param)
 
-	return string(res)
+	return string(res), err
 }
